@@ -10,43 +10,47 @@ from datetime import datetime,date
 ### All coords are at sea level - higher vantage points have longer days in reality
 ### Years have 365 days
 
+#test cases
 geocodes=[[42.0967107, -70.9678569], [42.1210441, -71.0300905], [42.0981889, -71.056849]]
+timezones=[-5 for i in range(len(geocodes))]  
+# #key
+# with open(r"C:\Users\cege\Documents\R\problem.txt") as f:
+#     lines=f.readlines()
+# #addresses
+# with open(r"C:\Users\cege\Pictures\gistfile1.txt") as f:
+#     lines2=f.readlines()    
 
-with open(r"C:\Users\cege\Documents\R\problem.txt") as f:
-    lines=f.readlines()
+# #run first 3 through API
+# test=lines2[0:3]
 
-with open(r"C:\Users\cege\Pictures\gistfile1.txt") as f:
-    lines2=f.readlines()    
 
-test=lines2[0:3]
-t=lines[0]
+# #generates geocodes from addresses
+# geocodes=[]
+# l=[]
+# for address in test:
+#   address_data= requests.get("https://maps.googleapis.com/maps/api/geocode/json?address="+address+"&key="+t).json()
+#   l.append(address_data)
+#   address_data=address_data['results']
+#   if address_data!=[]:
+#     lat, lng= address_data[0]['geometry']['location']['lat'], address_data[0]['geometry']['location']['lng']
+#     geocodes.append([lat,lng])
 
-geocodes=[]
-l=[]
-for address in test:
-  address_data= requests.get("https://maps.googleapis.com/maps/api/geocode/json?address="+address+"&key="+t).json()
-  l.append(address_data)
-  address_data=address_data['results']
-  if address_data!=[]:
-    lat, lng= address_data[0]['geometry']['location']['lat'], address_data[0]['geometry']['location']['lng']
-    geocodes.append([lat,lng])
-
-curtime=int(time.time()) #default curtime
+curtime=int(time.time()) #default curtime, making the date to determine sunrise/sunset
 def customdate(yyyy,mm,dd):
     return int(datetime.timestamp(datetime(yyyy,mm,dd)))
     
-def dpsgetter(time=curtime): #allows custom dates
+def dpsgetter(time=curtime): #allows custom dates, dps=days past solstice
     x=datetime.date(datetime.fromtimestamp(time))
     dps=(abs(date(x.year,6,21)-x).total_seconds()/86400)%182.5
     return dps
 
 dps=dpsgetter() 
 
-timezones=[]  
-for lat,long in geocodes:
-    j=requests.get("https://maps.googleapis.com/maps/api/timezone/json?location="+str(lat)+"%2C"+str(long)+"&timestamp="+str(curtime)+"&key="+t).json()
-    if j['status']=="OK":
-        timezones.append(j['rawOffset']/3600)
+
+# for lat,long in geocodes:
+#     j=requests.get("https://maps.googleapis.com/maps/api/timezone/json?location="+str(lat)+"%2C"+str(long)+"&timestamp="+str(curtime)+"&key="+t).json()
+#     if j['status']=="OK":
+#         timezones.append(j['rawOffset']/3600)
 
 #now do the geometry
 tilt=23.44 #base axial tilt
